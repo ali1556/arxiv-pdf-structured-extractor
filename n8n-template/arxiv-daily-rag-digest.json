@@ -51,7 +51,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const parser = new DOMParser();\nconst xmlDoc = parser.parseFromString($input.first().json.data, 'text/xml');\nconst entries = xmlDoc.getElementsByTagName('entry');\nconst arxivIds = [];\n\nfor (let i = 0; i < entries.length; i++) {\n  const idUrl = entries[i].getElementsByTagName('id')[0]?.textContent || '';\n  const arxivId = idUrl.split('/abs/').pop();\n  if (arxivId) {\n    arxivIds.push(arxivId.trim());\n  }\n}\n\n// Fallback to paper 1706.03762 for test if search is empty\nconst finalIds = arxivIds.length > 0 ? arxivIds : ['1706.03762'];\n\nreturn [{\n  json: {\n    urls_or_ids: finalIds,\n    extract_chunks: true,\n    chunk_size: 1200,\n    chunk_overlap: 200\n  }\n}];"
+        "jsCode": "const rawXml = $input.first().json.data || '';\nconst matches = rawXml.match(/arxiv\\.org\\/abs\\/([^\\s<\"]+)/gi) || [];\nconst arxivIds = [...new Set(matches.map(m => m.split('/abs/').pop()))];\n\n// Fallback to paper 1706.03762 for easy test if query was empty\nconst finalIds = arxivIds.length > 0 ? arxivIds : ['1706.03762'];\n\nreturn [{\n  json: {\n    urls_or_ids: finalIds,\n    extract_chunks: true,\n    chunk_size: 1200,\n    chunk_overlap: 200\n  }\n}];"
       },
       "id": "11111111-0000-0000-0000-000000000003",
       "name": "Extract IDs & Build Input",
