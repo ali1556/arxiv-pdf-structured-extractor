@@ -74,7 +74,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"urls_or_ids\": $input.all().map(i => i.json.arxiv_id),\n  \"extract_chunks\": true,\n  \"chunk_size\": 1200,\n  \"chunk_overlap\": 200\n}"
+        "jsonBody": "={{ JSON.stringify({ urls_or_ids: $('Extract ArXiv IDs').all().map(i => i.json.arxiv_id), extract_chunks: true, chunk_size: 1200, chunk_overlap: 200 }) }}"
       },
       "id": "11111111-0000-0000-0000-000000000004",
       "name": "Apify: Parse Paper to Clean JSON & Chunks",
