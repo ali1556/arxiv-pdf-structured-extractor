@@ -30,7 +30,7 @@
             },
             {
               "name": "max_results",
-              "value": "5"
+              "value": "3"
             },
             {
               "name": "sortBy",
@@ -51,10 +51,10 @@
     },
     {
       "parameters": {
-        "jsCode": "const parser = new DOMParser();\nconst xmlDoc = parser.parseFromString($input.first().json.data, 'text/xml');\nconst entries = xmlDoc.getElementsByTagName('entry');\nconst items = [];\n\nfor (let i = 0; i < entries.length; i++) {\n  const idUrl = entries[i].getElementsByTagName('id')[0]?.textContent || '';\n  const arxivId = idUrl.split('/abs/').pop();\n  if (arxivId) {\n    items.push({ json: { arxiv_id: arxivId } });\n  }\n}\nreturn items;"
+        "jsCode": "const parser = new DOMParser();\nconst xmlDoc = parser.parseFromString($input.first().json.data, 'text/xml');\nconst entries = xmlDoc.getElementsByTagName('entry');\nconst arxivIds = [];\n\nfor (let i = 0; i < entries.length; i++) {\n  const idUrl = entries[i].getElementsByTagName('id')[0]?.textContent || '';\n  const arxivId = idUrl.split('/abs/').pop();\n  if (arxivId) {\n    arxivIds.push(arxivId.trim());\n  }\n}\n\n// Fallback to paper 1706.03762 for test if search is empty\nconst finalIds = arxivIds.length > 0 ? arxivIds : ['1706.03762'];\n\nreturn [{\n  json: {\n    urls_or_ids: finalIds,\n    extract_chunks: true,\n    chunk_size: 1200,\n    chunk_overlap: 200\n  }\n}];"
       },
       "id": "11111111-0000-0000-0000-000000000003",
-      "name": "Extract ArXiv IDs",
+      "name": "Extract IDs & Build Input",
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [680, 320]
@@ -74,7 +74,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ urls_or_ids: $('Extract ArXiv IDs').all().map(i => i.json.arxiv_id), extract_chunks: true, chunk_size: 1200, chunk_overlap: 200 }) }}"
+        "jsonBody": "={{ JSON.stringify($json) }}"
       },
       "id": "11111111-0000-0000-0000-000000000004",
       "name": "Apify: Parse Paper to Clean JSON & Chunks",
@@ -122,14 +122,14 @@
       "main": [
         [
           {
-            "node": "Extract ArXiv IDs",
+            "node": "Extract IDs & Build Input",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Extract ArXiv IDs": {
+    "Extract IDs & Build Input": {
       "main": [
         [
           {
