@@ -1,0 +1,73 @@
+{
+  "actorSpecification": 1,
+  "fields": {
+    "status": {
+      "type": "string",
+      "description": "Processing status (SUCCESS or FAILED)"
+    },
+    "source_input": {
+      "type": "string",
+      "description": "Original URL or ID requested"
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Extracted academic metadata (title, authors, affiliations, dates, identifiers)"
+    },
+    "abstract": {
+      "type": "string",
+      "description": "Clean paper abstract"
+    },
+    "sections": {
+      "type": "array",
+      "description": "List of paper sections with headings and clean body text"
+    },
+    "equations_count": {
+      "type": "integer",
+      "description": "Number of detected formula/equation blocks"
+    },
+    "tables_summary": {
+      "type": "array",
+      "description": "Summary and captions of detected tables"
+    },
+    "citations": {
+      "type": "array",
+      "description": "Parsed references with year, guessed title, and ArXiv IDs"
+    },
+    "chunks": {
+      "type": "array",
+      "description": "LLM-ready overlapping text chunks with section metadata"
+    },
+    "stats": {
+      "type": "object",
+      "description": "Parsing performance and word/page metrics"
+    }
+  },
+  "views": {
+    "overview": {
+      "title": "Overview",
+      "transformation": {
+        "fields": [
+          "status",
+          "metadata.title",
+          "metadata.arxiv_id",
+          "metadata.authors",
+          "stats.pages",
+          "equations_count",
+          "stats.citations_count"
+        ]
+      },
+      "display": {
+        "component": "table",
+        "columns": {
+          "status": { "label": "Status" },
+          "metadata.title": { "label": "Paper Title" },
+          "metadata.arxiv_id": { "label": "ArXiv ID" },
+          "metadata.authors": { "label": "Authors" },
+          "stats.pages": { "label": "Pages" },
+          "equations_count": { "label": "Equations" },
+          "stats.citations_count": { "label": "Citations" }
+        }
+      }
+    }
+  }
+}

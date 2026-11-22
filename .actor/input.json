@@ -1,0 +1,9 @@
+{
+  "urls_or_ids": [
+    "1706.03762"
+  ],
+  "extract_chunks": true,
+  "chunk_size": 1200,
+  "chunk_overlap": 200,
+  "max_papers": 1
+}

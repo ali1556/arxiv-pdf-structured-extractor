@@ -1,0 +1,62 @@
+{
+  "title": "Academic Paper & ArXiv PDF-to-Structured-JSON Extractor Input",
+  "type": "object",
+  "schemaVersion": 1,
+  "properties": {
+    "urls_or_ids": {
+      "title": "Paper URLs or ArXiv IDs",
+      "type": "array",
+      "description": "List of ArXiv IDs (e.g. '2312.12345'), ArXiv abstract/PDF URLs (e.g. 'https://arxiv.org/abs/1706.03762'), or direct academic PDF URLs.",
+      "editor": "json",
+      "prefill": [
+        "1706.03762",
+        "https://arxiv.org/abs/2312.12345"
+      ]
+    },
+    "extract_chunks": {
+      "title": "Generate LLM-Ready Chunks",
+      "type": "boolean",
+      "description": "Generate token-bounded overlapping text chunks tagged with section headers for RAG pipelines.",
+      "default": true
+    },
+    "chunk_size": {
+      "title": "Chunk Size (characters)",
+      "type": "integer",
+      "description": "Target size in characters for each chunk (approx. 250 words / ~300 tokens per 1000 characters).",
+      "default": 1200,
+      "minimum": 200,
+      "maximum": 8000
+    },
+    "chunk_overlap": {
+      "title": "Chunk Overlap (characters)",
+      "type": "integer",
+      "description": "Character overlap between consecutive chunks to preserve contextual boundaries.",
+      "default": 200,
+      "minimum": 0,
+      "maximum": 1000
+    },
+    "max_papers": {
+      "title": "Max Papers to Process",
+      "type": "integer",
+      "description": "Safety cap on maximum papers processed in a single run.",
+      "default": 50,
+      "minimum": 1,
+      "maximum": 500
+    },
+    "timeout_secs": {
+      "title": "Download Timeout (Seconds)",
+      "type": "integer",
+      "description": "Maximum seconds allowed for downloading a single PDF file.",
+      "default": 45,
+      "minimum": 10,
+      "maximum": 300
+    },
+    "proxyConfiguration": {
+      "title": "Proxy configuration",
+      "type": "object",
+      "description": "Apify Proxy settings to avoid rate limits when scraping large batches.",
+      "editor": "proxy"
+    }
+  },
+  "required": ["urls_or_ids"]
+}

@@ -1,0 +1,17 @@
+{
+  "actorSpecification": 1,
+  "name": "arxiv-pdf-structured-extractor",
+  "title": "Academic Paper & ArXiv PDF-to-Structured-JSON Extractor",
+  "description": "Fast, high-fidelity extractor converting ArXiv and academic PDF papers into clean, schema-validated structured JSON with citations and LLM-ready RAG chunks.",
+  "version": "1.0",
+  "meta": {
+    "templateId": "python-empty"
+  },
+  "dockerfilePath": "Dockerfile",
+  "input": "./input_schema.json",
+  "storages": {
+    "dataset": "./output_schema.json"
+  },
+  "pricingModel": "PAY_PER_EVENT",
+  "payPerEvent": "./pay_per_event.json"
+}

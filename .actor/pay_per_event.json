@@ -1,0 +1,10 @@
+{
+  "actorSpecification": 1,
+  "events": {
+    "paper-parsed": {
+      "eventTitle": "Paper Parsed Successfully",
+      "eventDescription": "Charged when an academic paper or ArXiv PDF is successfully fetched, parsed into structured JSON, and pushed to the Apify Dataset.",
+      "priceUsd": 0.005
+    }
+  }
+}
