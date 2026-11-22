@@ -1,0 +1,10 @@
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+storage/
+.pytest_cache/
+*.log
+.git/
+.github/
+.DS_Store

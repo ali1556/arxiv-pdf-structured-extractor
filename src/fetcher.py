@@ -46,6 +46,10 @@ def resolve_paper_url(raw_input: str) -> Tuple[str, Optional[str]]:
         pdf_url = f"https://arxiv.org/pdf/{clean_id}.pdf"
         return pdf_url, clean_id
 
+    # Bare DOI (e.g. 10.1000/182 or 10.1016/j.cell...)
+    if re.match(r"^10\.\d{4,9}/[-._;()/:A-Za-z0-9]+$", clean):
+        return f"https://doi.org/{clean}", None
+
     # If it's already a full HTTP/HTTPS URL
     if clean.startswith("http://") or clean.startswith("https://"):
         return clean, None

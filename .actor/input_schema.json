@@ -6,8 +6,11 @@
     "urls_or_ids": {
       "title": "Paper URLs or ArXiv IDs",
       "type": "array",
-      "description": "List of ArXiv IDs (e.g. '2312.12345'), ArXiv abstract/PDF URLs (e.g. 'https://arxiv.org/abs/1706.03762'), or direct academic PDF URLs.",
-      "editor": "json",
+      "description": "List of ArXiv IDs (e.g. '1706.03762'), ArXiv abstract/PDF URLs (e.g. 'https://arxiv.org/abs/1706.03762'), or direct academic PDF links.",
+      "editor": "stringList",
+      "items": {
+        "type": "string"
+      },
       "prefill": [
         "1706.03762",
         "https://arxiv.org/abs/2312.12345"

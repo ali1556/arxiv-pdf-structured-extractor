@@ -104,78 +104,84 @@ def parse_pdf_document(
     Performs fast, high-fidelity PDF extraction using PyMuPDF.
     Combines layout analysis with ArXiv API metadata for high precision.
     """
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    page_count = len(doc)
-    doc_meta = doc.metadata or {}
-
-    # 1. Title Extraction
-    title = ""
-    if api_metadata and api_metadata.get("title"):
-        title = api_metadata["title"]
-    elif doc_meta.get("title") and len(doc_meta["title"].strip()) > 4:
-        title = doc_meta["title"].strip()
-    
-    # 2. Page-by-Page Extraction
+    # 1. Page-by-Page Layout & Text Extraction (PyMuPDF)
     all_blocks: List[Dict[str, Any]] = []
     equations_count = 0
     tables: List[TableSummary] = []
     first_page_spans: List[Dict[str, Any]] = []
 
-    for page_idx in range(page_count):
-        page = doc[page_idx]
-        text_page = page.get_text("dict")
-        
-        for block in text_page.get("blocks", []):
-            if block.get("type") == 0:  # Text block
-                block_lines: List[str] = []
-                max_font_size = 0.0
-                is_bold = False
+    with fitz.open(stream=pdf_bytes, filetype="pdf") as doc:
+        if doc.is_encrypted:
+            raise ValueError("PDF document is encrypted or password-protected.")
 
-                for line in block.get("lines", []):
-                    line_spans_text: List[str] = []
-                    for span in line.get("spans", []):
-                        span_text = span.get("text", "")
-                        line_spans_text.append(span_text)
-                        size = span.get("size", 0.0)
-                        if size > max_font_size:
-                            max_font_size = size
-                        flags = span.get("flags", 0)
-                        if flags & 2 or "bold" in span.get("font", "").lower():
-                            is_bold = True
+        page_count = len(doc)
+        if page_count == 0:
+            raise ValueError("PDF document contains 0 pages or has a corrupted page tree.")
 
-                        if page_idx == 0:
-                            first_page_spans.append(span)
+        doc_meta = dict(doc.metadata or {})
 
-                    line_str = "".join(line_spans_text).strip()
-                    if line_str:
-                        block_lines.append(line_str)
-                        # Check for equation labels like (1) or (2.3) at end of line
-                        if EQUATION_LABEL_PATTERN.search(line_str):
-                            equations_count += 1
+        for page_idx in range(page_count):
+            page = doc[page_idx]
+            text_page = page.get_text("dict")
+            
+            for block in text_page.get("blocks", []):
+                if block.get("type") == 0:  # Text block
+                    block_lines: List[str] = []
+                    max_font_size = 0.0
+                    is_bold = False
 
-                raw_block_text = "\n".join(block_lines)
-                clean_block = clean_text(raw_block_text)
+                    for line in block.get("lines", []):
+                        line_spans_text: List[str] = []
+                        for span in line.get("spans", []):
+                            span_text = span.get("text", "")
+                            line_spans_text.append(span_text)
+                            size = span.get("size", 0.0)
+                            if size > max_font_size:
+                                max_font_size = size
+                            flags = span.get("flags", 0)
+                            if flags & 2 or "bold" in span.get("font", "").lower():
+                                is_bold = True
 
-                if clean_block:
-                    all_blocks.append({
-                        "page": page_idx,
-                        "text": clean_block,
-                        "raw_text": raw_block_text,
-                        "max_font_size": max_font_size,
-                        "is_bold": is_bold,
-                        "bbox": block.get("bbox"),
-                    })
+                            if page_idx == 0:
+                                first_page_spans.append(span)
 
-                    # Table detection
-                    table_match = TABLE_CAPTION_PATTERN.match(clean_block)
-                    if table_match:
-                        tables.append(
-                            TableSummary(
-                                table_index=len(tables) + 1,
-                                caption=clean_block[:250],
-                                context_snippet=clean_block[:400],
+                        line_str = "".join(line_spans_text).strip()
+                        if line_str:
+                            block_lines.append(line_str)
+                            # Check for equation labels like (1) or (2.3) at end of line
+                            if EQUATION_LABEL_PATTERN.search(line_str):
+                                equations_count += 1
+
+                    raw_block_text = "\n".join(block_lines)
+                    clean_block = clean_text(raw_block_text)
+
+                    if clean_block:
+                        all_blocks.append({
+                            "page": page_idx,
+                            "text": clean_block,
+                            "raw_text": raw_block_text,
+                            "max_font_size": max_font_size,
+                            "is_bold": is_bold,
+                            "bbox": block.get("bbox"),
+                        })
+
+                        # Table detection
+                        table_match = TABLE_CAPTION_PATTERN.match(clean_block)
+                        if table_match:
+                            tables.append(
+                                TableSummary(
+                                    table_index=len(tables) + 1,
+                                    caption=clean_block[:250],
+                                    context_snippet=clean_block[:400],
+                                )
                             )
-                        )
+
+    # 2. Title Extraction
+    title = ""
+    if api_metadata and api_metadata.get("title"):
+        title = api_metadata["title"]
+    elif doc_meta.get("title") and len(doc_meta["title"].strip()) > 4:
+        title = doc_meta["title"].strip()
 
     # Fallback title from page 0 font sizes if still empty
     if not title and first_page_spans:

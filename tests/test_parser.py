@@ -90,3 +90,32 @@ def test_parse_synthetic_pdf():
     assert "Table 1" in output.tables_summary[0].caption
     assert len(output.citations) >= 1
     assert output.stats.pages == 1
+
+
+def test_parse_pure_pdf_without_api_metadata():
+    pdf_bytes = create_synthetic_paper_pdf()
+    output = parse_pdf_document(
+        pdf_bytes=pdf_bytes,
+        source_input="https://example.com/standalone.pdf",
+        pdf_url="https://example.com/standalone.pdf",
+        arxiv_id=None,
+        api_metadata=None,
+    )
+
+    assert output.status == "SUCCESS"
+    assert "Self-Attention in Neural Networks" in output.metadata.title
+    assert output.stats.pages == 1
+    assert output.stats.characters > 50
+
+
+def test_parse_corrupted_empty_pdf_raises():
+    import pytest
+    # A valid PDF header and trailer with 0 pages
+    empty_bytes = b"%PDF-1.4\n1 0 obj\n<<>>\nendobj\ntrailer\n<<>>\n%%EOF"
+
+    with pytest.raises(ValueError, match="0 pages"):
+        parse_pdf_document(
+            pdf_bytes=empty_bytes,
+            source_input="bad-pdf",
+            pdf_url="https://example.com/empty.pdf",
+        )

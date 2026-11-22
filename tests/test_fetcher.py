@@ -43,3 +43,8 @@ def test_resolve_paper_url():
     pdf_url, arxiv_id = resolve_paper_url("https://example.com/deeplearning.pdf")
     assert pdf_url == "https://example.com/deeplearning.pdf"
     assert arxiv_id is None
+
+    # Bare DOI resolution
+    pdf_url, arxiv_id = resolve_paper_url("10.1007/s11263-020-01300-8")
+    assert pdf_url == "https://doi.org/10.1007/s11263-020-01300-8"
+    assert arxiv_id is None
