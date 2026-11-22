@@ -4,17 +4,17 @@
   "description": "Defines where the Actor stores its structured academic paper results, citations, and RAG chunks.",
   "type": "object",
   "properties": {
-    "dataset": {
-      "type": "string",
-      "title": "Structured Paper Dataset",
-      "description": "Dataset containing clean metadata, abstract, sections, equations count, tables, citations, and RAG chunks.",
-      "template": "{{links.apiDefaultDatasetUrl}}/items?format=json"
-    },
     "overview": {
       "type": "string",
-      "title": "Overview Table View",
+      "title": "Overview Table",
       "description": "Overview table view of parsed papers.",
       "template": "{{links.apiDefaultDatasetUrl}}/items?view=overview"
+    },
+    "dataset": {
+      "type": "string",
+      "title": "All Fields Dataset",
+      "description": "Complete dataset containing metadata, abstract, sections, equations, tables, citations, and chunks.",
+      "template": "{{links.apiDefaultDatasetUrl}}/items"
     }
   }
 }
