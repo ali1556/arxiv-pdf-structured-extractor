@@ -63,8 +63,6 @@
       "parameters": {
         "method": "POST",
         "url": "https://api.apify.com/v2/acts/al1nr~arxiv-pdf-structured-extractor-1/run-sync-get-dataset-items",
-        "authentication": "genericCredentialType",
-        "genericAuthType": "httpHeaderAuth",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
@@ -96,7 +94,7 @@
     },
     {
       "parameters": {
-        "content": "## 🚀 Setup Instructions\n1. Replace **YOUR_APIFY_API_TOKEN** in the Apify node with your free token from https://console.apify.com/account/integrations\n2. Customize search keywords in the **Fetch Latest ArXiv Papers** node if desired.\n3. Connect the output of **Format Research Digest** to Slack, Discord, Notion, or your Vector DB (Qdrant/Pinecone).",
+        "content": "## 🚀 Setup Instructions\n1. In the **Apify: Parse Paper** node, replace **YOUR_APIFY_API_TOKEN** with your token from https://console.apify.com/account/integrations\n2. Customize search keywords in **Fetch Latest ArXiv Papers** node if desired.\n3. Connect the output of **Format Research Digest** to Slack, Discord, Notion, or your Vector DB (Qdrant/Pinecone).",
         "height": 220,
         "width": 380,
         "color": 6
