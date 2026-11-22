@@ -3,7 +3,7 @@
   "name": "arxiv-pdf-structured-extractor",
   "title": "Academic Paper & ArXiv PDF-to-Structured-JSON Extractor",
   "description": "Fast, high-fidelity extractor converting ArXiv and academic PDF papers into clean, schema-validated structured JSON with citations and LLM-ready RAG chunks.",
-  "version": "1.0",
+  "version": "0.0",
   "meta": {
     "templateId": "python-empty"
   },
